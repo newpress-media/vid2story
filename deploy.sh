@@ -93,19 +93,20 @@ print_warning "Uncomment if you have a GPU VM and need GPU acceleration."
 
 # Step 4: Data Drive Setup
 print_info "Step 4: Checking for data drive..."
-if [ -b /dev/sda ]; then
-    print_warning "Found /dev/sda. Setting up data drive..."
-    print_warning "This will FORMAT /dev/sda. Press Ctrl+C within 10 seconds to cancel..."
+# Check if there's a separate data disk (look for sdc or nvme1n1, not sda which is OS disk)
+if [ -b /dev/sdc ]; then
+    print_warning "Found /dev/sdc (data disk). Setting up data drive..."
+    print_warning "This will FORMAT /dev/sdc. Press Ctrl+C within 10 seconds to cancel..."
     sleep 10
     
-    sudo parted /dev/sda mklabel gpt
-    sudo parted -a opt /dev/sda mkpart primary ext4 0% 100%
-    sudo mkfs.ext4 /dev/sda1
+    sudo parted /dev/sdc mklabel gpt
+    sudo parted -a opt /dev/sdc mkpart primary ext4 0% 100%
+    sudo mkfs.ext4 /dev/sdc1
     sudo mkdir -p /datadrive
-    sudo mount /dev/sda1 /datadrive
+    sudo mount /dev/sdc1 /datadrive
     
     # Get UUID and add to fstab
-    UUID=$(sudo blkid -s UUID -o value /dev/sda1)
+    UUID=$(sudo blkid -s UUID -o value /dev/sdc1)
     if ! grep -q "$UUID" /etc/fstab; then
         echo "UUID=$UUID /datadrive ext4 defaults,nofail 0 0" | sudo tee -a /etc/fstab
     fi
@@ -114,9 +115,8 @@ if [ -b /dev/sda ]; then
     sudo chown $USER:$USER /datadrive
     print_info "Data drive mounted at /datadrive"
 else
-    print_warning "No /dev/sda found. Using home directory instead."
+    print_info "No separate data disk found. Using home directory."
     mkdir -p $HOME/datadrive
-    ln -sf $HOME/datadrive /tmp/datadrive
 fi
 
 # Set working directory
