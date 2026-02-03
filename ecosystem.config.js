@@ -9,7 +9,9 @@ module.exports = {
     max_memory_restart: '4G',
     env: {
       NODE_ENV: 'production',
-      PORT: 3000
+      PORT: 3000,
+      LD_LIBRARY_PATH: '/usr/local/cuda-13.0/lib64:' + (process.env.LD_LIBRARY_PATH || ''),
+      PATH: '/usr/local/cuda-13.0/bin:' + (process.env.PATH || '/usr/local/bin:/usr/bin:/bin')
     },
     error_file: './logs/pm2-error.log',
     out_file: './logs/pm2-out.log',
