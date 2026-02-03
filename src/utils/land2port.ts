@@ -54,13 +54,8 @@ export const cropLandscapeToPortrait = (
       cwd: land2portPath,
       env: {
         ...process.env,
-        LD_LIBRARY_PATH: '/usr/local/cuda-13.0/lib64' + (process.env.LD_LIBRARY_PATH ? ':' + process.env.LD_LIBRARY_PATH : ''),
-        PATH: '/usr/local/cuda-13.0/bin' + (process.env.PATH ? ':' + process.env.PATH : ''),
-      },
-    });
-
-    land2portProcess.stdout.on('data', (data) => {
-      console.log('land2port stdout:', data.toString());
+      LD_LIBRARY_PATH: '/usr/local/cuda-12.6/lib64' + (process.env.LD_LIBRARY_PATH ? ':' + process.env.LD_LIBRARY_PATH : ''),
+      PATH: '/usr/local/cuda-12.6/bin' + (process.env.PATH ? ':' + process.env.PATH : ''),
     });
 
     land2portProcess.stderr.on('data', (data) => {
